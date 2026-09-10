@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Meter Status"
+  short_description: "Read Codex quota status from the local read-only snapshot"
+  default_prompt: "Check my current Codex quota and reset status."
