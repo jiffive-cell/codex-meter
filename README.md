@@ -41,6 +41,25 @@
 
 首次运行如被 Gatekeeper 拦截，在 Finder 中右键应用并选择“打开”。当前包使用本地临时签名，正式分发仍需要 Developer ID 签名与公证。
 
+## 更新
+
+### 普通用户
+
+1. 从 [Releases](https://github.com/jiffive-cell/codex-meter/releases) 下载最新 DMG。
+2. 退出菜单栏中的 Codex Meter，将新版本拖入“应用程序”，选择“替换”。
+3. 重新启动应用；菜单栏设置通常会保留，Widget 的位置和尺寸由 macOS 保留。
+
+Skill 更新时，用新压缩包覆盖旧的 `~/.codex/skills/codex-meter-status` 目录即可。无需卸载旧版，也不要下载仓库里的 `.build` 或 `outputs` 临时文件。
+
+### 发布新版本（维护者）
+
+1. 同步更新 `Resources/Info.plist`、`Resources/WidgetInfo.plist`、宿主版本号和 README 中的版本号。
+2. 依次运行 `swift test`、`./scripts/build-app.sh`、`./scripts/smoke-test.sh`，确认 JSON、Widget 嵌入和签名校验均通过。
+3. 用当前 `.build/Codex Meter.app` 打包 DMG/ZIP，并重新打包 `skills/codex-meter-status`；为每个文件生成 SHA-256。
+4. 在 GitHub 的 **Releases → Draft a new release** 创建新的 `vX.Y.Z` 标签，上传 DMG、ZIP 和 Skill ZIP，写明变更与已知限制后发布。
+
+版本号建议遵循：补丁版本修复问题（`0.4.1`），次版本增加兼容功能（`0.5.0`），主版本才处理不兼容变更（`1.0.0`）。每次发布新标签，不要覆盖已经公开的 Release 资产。
+
 ## 菜单栏用法
 
 1. 启动 **Codex Meter**，菜单栏会出现状态图标。
