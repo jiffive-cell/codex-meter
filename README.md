@@ -4,6 +4,8 @@
 
 > 当前版本：`0.4.0` · macOS 14+ · 只读监控
 
+![Codex Meter preview](codex-meter-preview.jpg)
+
 ## 你会得到什么
 
 | 入口 | 适合查看 | 交互 |
