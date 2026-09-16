@@ -137,7 +137,7 @@ final class CodexMeterTests: XCTestCase {
 
     func testWidgetSnapshotStoreSavesAndLoadsInjectedFile() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("CodexMeterTests-\(UUID().uuidString)")
-        let fileURL = directory.appendingPathComponent("snapshot.json")
+        let fileURL = directory.appendingPathComponent("widget-snapshot.json")
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = WidgetSnapshotStore(directory: directory)
         let snapshot = WidgetSnapshot(
