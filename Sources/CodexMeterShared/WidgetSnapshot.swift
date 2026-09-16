@@ -168,6 +168,14 @@ public struct WidgetSnapshot: Codable, Equatable, Sendable {
     public var weeklyWindow: WidgetWindow? {
         primaryLimit?.windows.dropFirst().first
     }
+
+    /// Returns whether the snapshot is older than the caller's freshness
+    /// window.  The CLI and tests share this rule so a missing timestamp is
+    /// never treated as fresh by accident.
+    public func isStale(at date: Date = Date(), threshold: TimeInterval = 30 * 60) -> Bool {
+        guard let updatedAt else { return true }
+        return date.timeIntervalSince(updatedAt) > threshold
+    }
 }
 
 /// Persists the latest account snapshot for the WidgetKit extension.
