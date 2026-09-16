@@ -38,7 +38,7 @@ let package = Package(
         ),
         .testTarget(
             name: "CodexMeterTests",
-            dependencies: ["CodexMeter"],
+            dependencies: ["CodexMeter", "CodexMeterShared"],
             path: "Tests/CodexMeterTests"
         )
     ]
