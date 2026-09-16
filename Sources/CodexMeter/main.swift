@@ -53,6 +53,13 @@ struct ResetCreditSummary: Codable, Equatable {
     let credits: [ResetCredit]?
 }
 
+extension ResetCreditSummary {
+    var availableCredits: [ResetCredit] {
+        credits?.filter { $0.status == "available" }
+            .sorted { ($0.expiresAt ?? Int64.max) < ($1.expiresAt ?? Int64.max) } ?? []
+    }
+}
+
 struct RateLimitsResponse: Codable, Equatable {
     let accountId: String?
     let rateLimits: RateLimitSnapshot
@@ -118,11 +125,18 @@ final class HistoryStore {
     private let decoder = JSONDecoder()
     private let queue = DispatchQueue(label: "CodexMeter.history")
 
-    init() {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        let directory = appSupport.appendingPathComponent("CodexMeter", isDirectory: true)
-        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        fileURL = directory.appendingPathComponent("history.json")
+    init(fileURL: URL? = nil) {
+        if let fileURL {
+            self.fileURL = fileURL
+        } else {
+            let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            let directory = appSupport.appendingPathComponent("CodexMeter", isDirectory: true)
+            self.fileURL = directory.appendingPathComponent("history.json")
+        }
+        try? FileManager.default.createDirectory(
+            at: self.fileURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
     }
 
     func load() -> [HistorySample] {
@@ -537,7 +551,7 @@ final class MeterViewModel: ObservableObject {
         limits = displayLimits
         planName = planDisplayName(response.rateLimits.planType)
         availableResetCount = response.rateLimitResetCredits?.availableCount
-        resetCredits = response.rateLimitResetCredits?.credits?.filter { $0.status == "available" }.sorted { ($0.expiresAt ?? Int64.max) < ($1.expiresAt ?? Int64.max) } ?? []
+        resetCredits = response.rateLimitResetCredits?.availableCredits ?? []
         lastUpdated = Date()
         statusMessage = language.text("数据正常", "Data OK")
 
